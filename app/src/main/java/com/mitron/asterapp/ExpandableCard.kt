@@ -63,7 +63,7 @@ fun ExpandableCard(
         onClick = {
             expandedState = !expandedState
         },
-        backgroundColor = Color.Gray
+        backgroundColor = Color.White
     ) {
         Column(
             modifier = Modifier
@@ -81,7 +81,7 @@ fun ExpandableCard(
                     fontWeight = titleFontWeight,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    color= Color.White
+                    color= Color.DarkGray
                 )
                 IconButton(
                     modifier = Modifier
@@ -99,11 +99,11 @@ fun ExpandableCard(
                 }
             }
             if (expandedState) {
-                Text(text="Id : $id",color= Color.White)
+                Text(text="Id : $id",color= Color.DarkGray)
                 Spacer(modifier = Modifier.padding(4.dp))
-                Text(text="UserId: $userId",color= Color.White)
+                Text(text="UserId: $userId",color= Color.DarkGray)
                 Spacer(modifier = Modifier.padding(4.dp))
-                Text(text=body, fontWeight = FontWeight.SemiBold,color= Color.White)
+                Text(text=body, fontWeight = FontWeight.SemiBold,color= Color.DarkGray)
 
             }
         }
