@@ -1,4 +1,4 @@
 # AsterApp
 A jetpack compose app based on Retrofit to fetch data from API
-![](/app/asterSplash.jpg) 
-![](/app/asterData.jpg)
+<img src="/app/asterSplash.jpg" alt= “” width="180" height="320">
+<img src="/app/asterSplash.jpg" alt= “” width="180" height="320">
