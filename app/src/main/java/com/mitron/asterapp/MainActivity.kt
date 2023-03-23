@@ -5,30 +5,28 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Colors
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Divider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -47,7 +45,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +83,16 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-fun getJsonData(postsList:MutableList<AsterResponseModel>,ct: Context){
+@Composable
+fun GetJsonData(postsList:MutableList<AsterResponseModel>,ct: Context,isLoading: Boolean){
+
+    
+    var isLoading: Boolean by remember {
+        mutableStateOf(true)
+    }
+
+    CircularLoader(isLoading = isLoading)
+    
     val retrofit=Retrofit.Builder()
         .baseUrl("https://jsonplaceholder.typicode.com/")
         .addConverterFactory(GsonConverterFactory.create())
@@ -102,6 +108,7 @@ fun getJsonData(postsList:MutableList<AsterResponseModel>,ct: Context){
             response: Response<ArrayList<AsterResponseModel>?>
         ) {
             if(response.isSuccessful){
+                isLoading=false
                 var lst:ArrayList<AsterResponseModel> = ArrayList()
                 lst = response.body()!!
 
@@ -125,24 +132,31 @@ fun displayPosts() {
     val postsList = remember{
         mutableStateListOf<AsterResponseModel>()
     }
-
-    getJsonData(postsList,context)
     Column{
         TopAppBar(title = {Text(text="Aster App", color = Color.DarkGray, fontWeight = FontWeight.SemiBold)}, backgroundColor = Color.White, elevation = 4.dp)
-
-        LazyColumn(modifier = Modifier.padding(12.dp)) {
-            items(postsList) { post ->
-                ExpandableCard(
-                    title = post.title,
-                    id = post.id.toString(),
-                    userId = post.userId.toString(),
-                    body = post.body
-                )
-                Spacer(modifier = Modifier.padding(12.dp))
-            }
+        GetJsonData(postsList,context,true)
+        LazyColumn(modifier = Modifier
+            .fillMaxSize()
+            .padding(12.dp)) {
+                    items(postsList) { post ->
+                        ExpandableCard(
+                            title = post.title,
+                            id = post.id.toString(),
+                            userId = post.userId.toString(),
+                            body = post.body
+                        )
+                        Spacer(modifier = Modifier.padding(12.dp))
+                    }
         }
+
+
+
     }
 }
+
+
+
+
 
 
 @Composable
@@ -153,4 +167,13 @@ fun SplashScreen() {
             .fillMaxWidth())
     }
 
+}
+
+@Composable
+fun CircularLoader(isLoading:Boolean) {
+    if(isLoading){
+        Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().padding(16.dp)){
+        CircularProgressIndicator()
+        }
+    }
 }
